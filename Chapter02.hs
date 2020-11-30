@@ -102,9 +102,10 @@ list1 ++++ list2 = case list1 of
 (x:xs) +++++ list2 = x:(xs +++++ list2)
 
 sorted :: [Integer] -> Bool
-sorted []       = True
-sorted [_]      = True
-sorted (x:y:zs) = x < y && sorted (y:zs)
+sorted []             = True
+sorted [_]            = True
+sorted (x : r@(y:zs)) = x < y && sorted r
+-- sorted (x:y:zs)    = x < y && sorted (y:zs)
 
 maxmin3 [x]    = (x,x)
 maxmin3 (x:xs) = ( if x > xs_max then x else xs_max
@@ -127,11 +128,12 @@ ifibonacci2 :: Integer -> Maybe Integer
 ifibonacci2 n | n < 0     = Nothing
 ifibonacci2 0             = Just 0
 ifibonacci2 1             = Just 1
-ifibonacci2 n = let Just f1 = ifibonacci2 (n-1)
-                    Just f2 = ifibonacci2 (n-2)
-                in Just (f1 + f2)
+ifibonacci2 n             = let Just f1 = ifibonacci2 (n-1)
+                                Just f2 = ifibonacci2 (n-2)
+                            in Just (f1 + f2)
+
 binom _ 0          = 1
-binom x y | x == y = 1
+binom n k | n == k = 1
 binom n k          = binom (n-1) (k-1) + binom (n-1) k
 
 multipleOf :: Integer -> Integer -> Bool
@@ -158,8 +160,8 @@ responsibility _                 = "Unknown"
 
 specialClient :: Client -> Bool
 specialClient (clientName1 -> "Mr. Alejandro") = True
-specialClient (responsibility -> "Director")  = True
-specialClient _                               = False
+specialClient (responsibility -> "Director")   = True
+specialClient _                                = False
 
 -- Records
 
@@ -181,13 +183,20 @@ greet1 IndividualR { person = PersonR { firstName = fn } } = "Hi, " ++ fn
 greet1 CompanyR    { clientRName = c } = "Hi, " ++ c
 greet1 GovOrgR     { }                 = "Welcome"
 
+-- using XNamedFieldPuns
 greet2 IndividualR { person = PersonR { firstName } } = "Hi, " ++ firstName
 greet2 CompanyR    { clientRName } = "Hi, " ++ clientRName
 greet2 GovOrgR     { }             = "Welcome"
 
+-- using XRecordWildCards
 greet3 IndividualR { person = PersonR { .. } } = "Hi, " ++ firstName
 greet3 CompanyR    { .. }                      = "Hi, " ++ clientRName
 greet3 GovOrgR     { }                         = "Welcome"
+
+nameInCapitals :: PersonR -> PersonR
+nameInCapitals p@(PersonR { firstName = initial:rest }) = let newName = (toUpper initial):rest
+                                                          in p { firstName = newName } -- record updating syntax
+nameInCapitals p@(PersonR { firstName = "" })           = p
 
 -- Default values
 
@@ -216,3 +225,10 @@ connect' url options = undefined
 
 connDefault :: ConnOptions
 connDefault = ConnOptions TCP 0 NoProxy False False NoTimeOut
+
+-- connect using the defaults
+-- connect' "https://apress.com" connDefault
+
+-- connect using a slight variant of the defaults
+-- connect' "https://apress.com" connDefault { connType = UDP }
+

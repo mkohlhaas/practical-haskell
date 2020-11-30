@@ -1,0 +1,27 @@
+BangPatterns
+DataKinds
+DefaultSignatures
+DeriveAnyClass
+DeriveGeneric
+EmptyCase
+EmptyDataDecls
+FlexibleContexts
+FlexibleInstances
+FunctionalDependencies
+GADTs
+InstanceSigs
+KindSignatures
+LambdaCase #-}
+MultiParamTypeClasses
+NamedFieldPuns
+OverloadedStrings
+PatternSynonyms
+QuasiQuotes
+RecordWildCards
+ScopedTypeVariables
+TemplateHaskell
+TransformListComp
+TypeFamilies
+TypeOperators
+UndecidableInstances
+ViewPatterns
